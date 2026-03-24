@@ -354,7 +354,7 @@
   .empty-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
   .empty-sub   { font-size: 14px; color: var(--text3); }
 
-  /* FAB */
+  /* FAB — full width pill */
   .fab {
     position: fixed; bottom: 34px; left: 50%;
     transform: translateX(-50%);
@@ -374,8 +374,14 @@
     from { opacity: 0; transform: translateX(-50%) translateY(28px) scale(0.87); }
     to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
   }
-  .fab:hover { box-shadow: 0 16px 46px rgba(10,132,255,0.56), 0 2px 8px rgba(0,0,0,0.4); transform: translateX(-50%) translateY(-2px) scale(1.015); }
-  .fab:active { transform: translateX(-50%) scale(0.96); box-shadow: 0 5px 16px rgba(10,132,255,0.3); }
+  .fab:hover {
+    box-shadow: 0 16px 46px rgba(10,132,255,0.56), 0 2px 8px rgba(0,0,0,0.4);
+    transform: translateX(-50%) translateY(-2px) scale(1.01);
+  }
+  .fab:active {
+    transform: translateX(-50%) scale(0.96);
+    box-shadow: 0 5px 16px rgba(10,132,255,0.3);
+  }
   .fab-icon { display: inline-flex; transition: transform 0.32s var(--ease-spring); }
   .fab:hover .fab-icon { transform: rotate(90deg); }
 
@@ -386,12 +392,12 @@
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
     z-index: 200;
-    display: flex; align-items: flex-end; justify-content: center;
+    display: none; align-items: flex-end; justify-content: center;
     pointer-events: none;
     transition: background 0.3s var(--ease-smooth),
                 backdrop-filter 0.3s var(--ease-smooth);
   }
-  .modal-overlay.open { background: rgba(0,0,0,0.68); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); pointer-events: all; }
+  .modal-overlay.open { display: flex; background: rgba(0,0,0,0.68); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); pointer-events: all; }
 
   .modal {
     background: #1c1c1e; border-radius: 28px 28px 0 0;
@@ -822,12 +828,19 @@ function openModal() {
     document.getElementById('progressVal').textContent = '0%';
     setPriority('medium');
   }
-  document.getElementById('modalOverlay').classList.add('open');
+  const overlay = document.getElementById('modalOverlay');
+  overlay.style.display = 'flex';
+  // Force reflow so transition fires
+  overlay.getBoundingClientRect();
+  overlay.classList.add('open');
   setTimeout(() => document.getElementById('goalTitle').focus(), 460);
 }
 
 function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
+  const overlay = document.getElementById('modalOverlay');
+  overlay.classList.remove('open');
+  // Hide after animation completes
+  setTimeout(() => { overlay.style.display = 'none'; }, 400);
   editingId = null;
 }
 
